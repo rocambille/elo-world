@@ -37,7 +37,7 @@ function Login() {
       </div>
       <div>
         <label htmlFor="pat">PAT</label>
-        <input ref={patRef} id="pat" type="text" />
+        <input ref={patRef} id="pat" type="password" />
       </div>
       <div>
         <button type="submit">Validate</button>
