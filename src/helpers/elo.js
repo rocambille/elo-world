@@ -38,6 +38,7 @@ const elo = ({ DMax, kGenerator } = defaultConfig) => ({ ...a }) => {
         elo: newElo,
         matchCount: matchCount + 1,
         lastDelta: newElo - oldElo,
+        lastPlayedAt: Date.now(),
       };
     };
 
