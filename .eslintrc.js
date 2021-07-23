@@ -7,6 +7,7 @@ module.exports = {
       jsx: true, // Enable JSX since we're using React
     },
   },
+  plugins: ['react-hooks'],
   settings: {
     react: {
       version: 'detect', // Automatically detect the react version
@@ -28,5 +29,6 @@ module.exports = {
     'react/function-component-definition': [2, { namedComponents: 'function-declaration' }],
     'no-console': 1,
     'react/jsx-filename-extension': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
   },
 };

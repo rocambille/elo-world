@@ -2,10 +2,10 @@ import React from 'react';
 import { useMovieList } from '../contexts';
 
 function SaveButton() {
-  const { saveMovies } = useMovieList();
+  const { hasSomethingToSave, saveMovies } = useMovieList();
 
   return (
-    <button type="button" onClick={saveMovies}>
+    <button type="button" onClick={saveMovies} disabled={!hasSomethingToSave}>
       Save
     </button>
   );

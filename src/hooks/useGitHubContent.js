@@ -1,97 +1,118 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
+import { Buffer } from 'buffer';
 
-const authHeader = (token) => (token ? { Authorization: `Bearer ${token}` } : {});
+const gitReducer = (state, action) => {
+  const { git } = action;
+
+  const cleanedState = { ...state, err: null };
+
+  switch (git) {
+    case 'commit': {
+      const { content } = action;
+
+      return { ...cleanedState, content, isUpToDate: false };
+    }
+    case 'did fetch': {
+      const { content = cleanedState.content, sha } = action;
+
+      return { ...cleanedState, content, isFetching: false, isUpToDate: true, sha };
+    }
+    case 'failed fetch': {
+      const { err } = action;
+
+      return { ...cleanedState, err, isFetching: false };
+    }
+    case 'will fetch':
+      return { ...cleanedState, isFetching: true };
+    default:
+      throw new Error();
+  }
+};
+
+const bearer = (token) => token && `Bearer ${token}`;
 
 const defaulOptions = {
   afterPull: (data) => data,
   beforePush: (data) => data,
+  branch: 'main',
 };
 
-const useGitHubContent = (owner, repository, path, { token, initialContent, afterPull, beforePush, branch } = {}) => {
-  afterPull = afterPull ?? defaulOptions.afterPull;
-  beforePush = beforePush ?? defaulOptions.beforePush;
+const useGitHubContent = (owner, repository, path, options = defaulOptions) => {
+  const { token, initialContent, afterPull, beforePush, branch } = { ...defaulOptions, ...options };
 
-  const [content, setContent] = useState(initialContent);
-  const [sha, setSha] = useState();
-  const [isFetching, setFetching] = useState(false);
-  const [isUpToDate, setUpToDate] = useState(true);
+  const [{ content, err, isFetching, isUpToDate, sha }, dispatch] = useReducer(gitReducer, { content: initialContent });
 
-  let target = `https://api.github.com/repos/${owner}/${repository}/contents/${path}`;
+  const canBuildTarget = owner && repository && path;
+
+  const target = canBuildTarget && `https://api.github.com/repos/${owner}/${repository}/contents/${path}`;
 
   useEffect(() => {
-    const pull = async () => {
-      setFetching(true);
+    if (target) {
+      const targetWithRef = target && `${target}?ref=${branch}`;
 
-      if (branch) {
-        target += `?ref=${branch}`;
-      }
+      dispatch({ git: 'will fetch' });
 
-      const response = await fetch(target, { headers: { ...authHeader(token), Accept: 'application/vnd.github.v3+json' } });
+      fetch(targetWithRef, {
+        headers: {
+          Authorization: bearer(token),
+          Accept: 'application/vnd.github.v3+json',
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error();
+          }
+        })
+        .then(({ content: raw, sha }) => {
+          const decoded = Buffer.from(raw, 'base64');
+          const parsed = JSON.parse(decoded);
+          const content = afterPull(parsed);
 
-      setFetching(false);
-
-      if (response.status !== 200) {
-        return;
-      }
-
-      const json = await response.json();
-
-      // thx https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
-      const decodedContent = decodeURIComponent(
-        atob(json.content)
-          .split('')
-          .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-          .join(''),
-      );
-
-      const readyContent = afterPull(JSON.parse(decodedContent));
-
-      setContent(readyContent);
-      setSha(json.sha);
-      setUpToDate(true);
-    };
-
-    if (owner && repository && path) {
-      pull();
+          dispatch({ git: 'did fetch', content, sha });
+        })
+        .catch((err) => dispatch({ git: 'failed fetch', err }));
     }
-  }, [owner, repository, path, target, token, afterPull, branch]);
+  }, [afterPull, branch, target, token]);
 
-  useEffect(() => {
-    setUpToDate(false);
-  }, [content]);
+  const setContent = (content) => dispatch({ git: 'commit', content });
 
-  const push = async () => {
-    if (owner && repository && path && !isUpToDate) {
-      const readyContent = JSON.stringify(beforePush(content));
+  const push = () => {
+    if (!isUpToDate && !isFetching && content && sha && target) {
+      const ready = beforePush(content);
+      const json = JSON.stringify(ready);
+      const encoded = Buffer.from(json).toString('base64');
 
-      // thx https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
-      const encodedContent = btoa(encodeURIComponent(readyContent).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode(`0x${p1}`)));
-
-      setFetching(true);
+      dispatch({ git: 'will fetch' });
 
       fetch(target, {
         method: 'put',
         headers: {
-          ...authHeader(token),
+          Authorization: bearer(token),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           message: `updated ${path}`,
-          content: encodedContent,
+          content: encoded,
           sha,
           branch,
         }),
-      }).then((response) => {
-        if (response.status === 200) {
-          setUpToDate(true);
-        }
-
-        setFetching(false);
-      });
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error();
+          }
+        })
+        .then(({ content: { sha } }) => dispatch({ git: 'did fetch', sha }))
+        .catch((err) => dispatch({ git: 'failed fetch', err }));
     }
   };
 
   const git = {
+    err,
     isFetching,
     isUpToDate,
     push,

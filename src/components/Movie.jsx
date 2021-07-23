@@ -18,13 +18,14 @@ const formatLastDelta = (lastDelta) => {
 };
 
 function Movie({ children, data }) {
-  const { backdrop_path, elo, lastDelta, poster_path, title } = data;
+  const { backdrop_path, elo, lastDelta, poster_path, release_date, title } = data;
 
   const imgPath = poster_path ?? backdrop_path;
 
   return (
     <section>
       <h1>{title}</h1>
+      <time>{`(${new Date(release_date).getFullYear()})`}</time>
       {elo && lastDelta && (
         <span>
           {formatElo(elo)}
@@ -45,6 +46,7 @@ Movie.propTypes = {
     id: number.isRequired,
     lastDelta: number,
     poster_path: string,
+    release_date: string.isRequired,
     title: string.isRequired,
   }).isRequired,
 };

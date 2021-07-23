@@ -17,6 +17,8 @@ function MovieListProvider({ children }) {
     branch: 'data',
   });
 
+  const hasSomethingToSave = !git.isUpToDate;
+
   const addMovie = (data) => {
     setMovies([...movies, { ...data, elo: 1500, matchCount: 0 }]);
   };
@@ -33,7 +35,11 @@ function MovieListProvider({ children }) {
     setMovies(movies.map((movie) => newData.find(({ id }) => id === movie.id) ?? movie));
   };
 
-  return <MovieListContext.Provider value={{ movies, addMovie, removeMovie, saveMovies, updateMovies }}>{children}</MovieListContext.Provider>;
+  return (
+    <MovieListContext.Provider value={{ movies, addMovie, hasSomethingToSave, removeMovie, saveMovies, updateMovies }}>
+      {children}
+    </MovieListContext.Provider>
+  );
 }
 
 MovieListProvider.propTypes = {
