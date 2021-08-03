@@ -21,13 +21,15 @@ function useFetch(url, options = defaulOptions) {
   const [error, setError] = useState();
 
   useEffect(() => {
-    beforeFetch();
+    if (url) {
+      beforeFetch();
 
-    fetch(url, fetchOptions)
-      .then((response) => response.ok && extractBody(response))
-      .then((body) => body && setState(extractData(body)))
-      .catch((error) => setError(error))
-      .finally(afterFetch);
+      fetch(url, fetchOptions)
+        .then((response) => response.ok && extractBody(response))
+        .then((body) => body && setState(extractData(body)))
+        .catch((error) => setError(error))
+        .finally(afterFetch);
+    }
   }, [afterFetch, beforeFetch, extractBody, extractData, fetchOptions, url]);
 
   return [state, error];
