@@ -5,7 +5,11 @@ function SaveButton() {
   const { hasSomethingToSave, saveMovies } = useMovieList();
 
   return (
-    <button type="button" onClick={saveMovies} disabled={!hasSomethingToSave}>
+    <button
+      className="link"
+      type="button"
+      onClick={saveMovies}
+      disabled={!hasSomethingToSave}>
       Save
     </button>
   );

@@ -11,11 +11,16 @@ const MovieListContext = createContext();
 function MovieListProvider({ children }) {
   const { loginData } = useLoginData();
 
-  const [movies, setMovies, git] = useGitHubContent(loginData?.username, 'elo-world', 'data.json', {
-    token: loginData?.pat,
-    initialContent,
-    branch: 'data',
-  });
+  const [movies, setMovies, git] = useGitHubContent(
+    loginData?.username,
+    'elo-world',
+    'data.json',
+    {
+      token: loginData?.pat,
+      initialContent,
+      branch: 'data',
+    },
+  );
 
   const hasSomethingToSave = !git.isUpToDate;
 
@@ -32,11 +37,21 @@ function MovieListProvider({ children }) {
   };
 
   const updateMovies = (...newData) => {
-    setMovies(movies.map((movie) => newData.find(({ id }) => id === movie.id) ?? movie));
+    setMovies(
+      movies.map((movie) => newData.find(({ id }) => id === movie.id) ?? movie),
+    );
   };
 
   return (
-    <MovieListContext.Provider value={{ movies, addMovie, hasSomethingToSave, removeMovie, saveMovies, updateMovies }}>
+    <MovieListContext.Provider
+      value={{
+        movies,
+        addMovie,
+        hasSomethingToSave,
+        removeMovie,
+        saveMovies,
+        updateMovies,
+      }}>
       {children}
     </MovieListContext.Provider>
   );

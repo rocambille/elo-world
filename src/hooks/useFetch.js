@@ -8,7 +8,14 @@ const defaulOptions = {
 };
 
 function useFetch(url, options = defaulOptions) {
-  const { afterFetch, beforeFetch, extractBody, extractData, fetchOptions, initialState } = { ...defaulOptions, ...options };
+  const {
+    afterFetch,
+    beforeFetch,
+    extractBody,
+    extractData,
+    fetchOptions,
+    initialState,
+  } = { ...defaulOptions, ...options };
 
   const [state, setState] = useState(initialState);
   const [error, setError] = useState();

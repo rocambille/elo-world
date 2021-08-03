@@ -15,7 +15,13 @@ const gitReducer = (state, action) => {
     case 'did fetch': {
       const { content = cleanedState.content, sha } = action;
 
-      return { ...cleanedState, content, isFetching: false, isUpToDate: true, sha };
+      return {
+        ...cleanedState,
+        content,
+        isFetching: false,
+        isUpToDate: true,
+        sha,
+      };
     }
     case 'failed fetch': {
       const { err } = action;
@@ -38,13 +44,21 @@ const defaulOptions = {
 };
 
 const useGitHubContent = (owner, repository, path, options = defaulOptions) => {
-  const { token, initialContent, afterPull, beforePush, branch } = { ...defaulOptions, ...options };
+  const { token, initialContent, afterPull, beforePush, branch } = {
+    ...defaulOptions,
+    ...options,
+  };
 
-  const [{ content, err, isFetching, isUpToDate, sha }, dispatch] = useReducer(gitReducer, { content: initialContent });
+  const [{ content, err, isFetching, isUpToDate, sha }, dispatch] = useReducer(
+    gitReducer,
+    { content: initialContent },
+  );
 
   const canBuildTarget = owner && repository && path;
 
-  const target = canBuildTarget && `https://api.github.com/repos/${owner}/${repository}/contents/${path}`;
+  const target =
+    canBuildTarget &&
+    `https://api.github.com/repos/${owner}/${repository}/contents/${path}`;
 
   useEffect(() => {
     if (target) {

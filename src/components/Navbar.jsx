@@ -1,8 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-
-import SaveButton from '../components/SaveButton';
-import { useLoginData } from '../contexts';
+import { string } from 'prop-types';
 
 const link = (path, text) => (
   <li>
@@ -12,28 +10,24 @@ const link = (path, text) => (
   </li>
 );
 
-function Navbar() {
-  const { loginData } = useLoginData();
-
+function Navbar({ className }) {
   return (
-    <nav>
-      <ul>
+    <nav className={className}>
+      <ul className="flex flex-row justify-evenly sm:justify-start shadow-t sm:shadow-b">
         {link('/', 'Home')}
         {link('/play', 'Play')}
         {link('/search', 'Search')}
-        {loginData == null ? (
-          link('/login', 'Login')
-        ) : (
-          <>
-            <li>
-              <SaveButton />
-            </li>
-            {link('/logout', 'Logout')}
-          </>
-        )}
       </ul>
     </nav>
   );
 }
+
+Navbar.propTypes = {
+  className: string,
+};
+
+Navbar.defaultProps = {
+  className: '',
+};
 
 export default Navbar;

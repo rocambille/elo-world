@@ -16,10 +16,16 @@ function SearchProvider({ children }) {
   const [results] = useFetch(url, fetchOptions);
 
   const setQuery = (query) => {
-    setUrl(`https://api.themoviedb.org/3/search/movie?query=${query}&api_key=b581f37ace71546447fa00eb1e80ab57`);
+    setUrl(
+      `https://api.themoviedb.org/3/search/movie?query=${query}&api_key=b581f37ace71546447fa00eb1e80ab57`,
+    );
   };
 
-  return <SearchContext.Provider value={{ results, setQuery }}>{children}</SearchContext.Provider>;
+  return (
+    <SearchContext.Provider value={{ results, setQuery }}>
+      {children}
+    </SearchContext.Provider>
+  );
 }
 
 SearchProvider.propTypes = {

@@ -6,7 +6,11 @@ const LoginDataContext = createContext();
 function LoginDataProvider({ children }) {
   const [loginData, setLoginData] = useState();
 
-  return <LoginDataContext.Provider value={{ loginData, setLoginData }}>{children}</LoginDataContext.Provider>;
+  return (
+    <LoginDataContext.Provider value={{ loginData, setLoginData }}>
+      {children}
+    </LoginDataContext.Provider>
+  );
 }
 
 LoginDataProvider.propTypes = {

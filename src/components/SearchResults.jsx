@@ -33,7 +33,9 @@ SearchResult.propTypes = {
 function SearchResults() {
   const { results } = useSearch();
 
-  return results.map((result) => <SearchResult key={result.id} data={result} />);
+  return results.map((result) => (
+    <SearchResult key={result.id} data={result} />
+  ));
 }
 
 export default SearchResults;
