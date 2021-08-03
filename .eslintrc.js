@@ -1,9 +1,10 @@
 module.exports = {
   root: true, // Make sure eslint picks up the config at the root of the directory
   parserOptions: {
-    ecmaVersion: 2020, // Use the latest ecmascript standard
+    ecmaVersion: 'latest', // Use the latest ecmascript standard
     sourceType: 'module', // Allows using import/export statements
     ecmaFeatures: {
+      impliedStrict: true, // Enable global strict mode
       jsx: true, // Enable JSX since we're using React
     },
   },
@@ -26,7 +27,10 @@ module.exports = {
   ],
   rules: {
     'prettier/prettier': ['error', {}, { usePrettierrc: true }], // Use our .prettierrc file as source
-    'react/function-component-definition': [2, { namedComponents: 'function-declaration' }],
+    'react/function-component-definition': [
+      2,
+      { namedComponents: 'function-declaration' },
+    ],
     'no-console': 1,
     'react/jsx-filename-extension': 'error',
     'react-hooks/exhaustive-deps': 'warn',
