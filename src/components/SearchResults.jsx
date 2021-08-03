@@ -18,11 +18,13 @@ function SearchResult({ data }) {
   }
 
   return (
-    <Movie data={data}>
-      <button type="button" onClick={buttonData.onClick}>
-        {buttonData.text}
-      </button>
-    </Movie>
+    <li>
+      <Movie data={data}>
+        <button type="button" onClick={buttonData.onClick}>
+          {buttonData.text}
+        </button>
+      </Movie>
+    </li>
   );
 }
 
@@ -33,9 +35,13 @@ SearchResult.propTypes = {
 function SearchResults() {
   const { results } = useSearch();
 
-  return results.map((result) => (
-    <SearchResult key={result.id} data={result} />
-  ));
+  return (
+    <ol className="grid grid-cols-1 sm:grid-cols-auto-fit gap-y-4 justify-items-center">
+      {results.map((result) => (
+        <SearchResult key={result.id} data={result} />
+      ))}
+    </ol>
+  );
 }
 
 export default SearchResults;
