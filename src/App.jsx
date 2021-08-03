@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 
 import { LoginDataProvider, MovieListProvider } from './contexts';
 import Controls from './components/Controls';

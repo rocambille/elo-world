@@ -1,17 +1,20 @@
 {
-  "name": "react-starter-template",
+  "name": "elo-world",
+  "homepage": "https://rocambille.github.io/elo-world",
   "version": "2.1.1",
-  "description": "template for react app",
-  "author": "Basile V. <basile64.v@gmail.com>",
+  "description": "Elo World, based on react-starter-wcs by Basile V. <basile64.v@gmail.com>",
+  "author": "Romain G. <rocambille@gmail.com>",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --base=/elo-world/",
     "serve": "vite preview",
     "lint": "lint-staged",
-    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=5"
+    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=5",
+    "predeploy": "npm run build",
+    "deploy": "touch dist/.nojekyll && gh-pages -d dist -t"
   },
   "keywords": [
     "react"
@@ -38,6 +41,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.23.1",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "gh-pages": "^3.2.3",
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
