@@ -16,7 +16,7 @@ function Home() {
             b.lastDelta - a.lastDelta,
         )
         .map((movie) => (
-          <li key={movie.id} className="inline-block">
+          <li key={movie.id}>
             <Movie data={movie} />
           </li>
         ))}
