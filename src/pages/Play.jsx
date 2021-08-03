@@ -7,14 +7,26 @@ import elo from '../helpers/elo';
 
 const player = elo();
 
+const randomizer = () => Math.random() - 0.5;
+
 function Play() {
   const { movies, updateMovies } = useMovieList();
 
-  let [movie1, movie2] = movies.sort((a, b) => a.matchCount - b.matchCount);
-
-  if (movie1 == null || movie2 == null) {
+  if (movies.length < 10) {
     return <p>you should start with searching movies ;)</p>;
   }
+
+  const sortFunctions = [
+    (a, b) => a.matchCount - b.matchCount,
+    (a, b) =>
+      new Date(a.lastPlayedAt).getTime() - new Date(b.lastPlayedAt).getTime(),
+    randomizer,
+  ].sort(randomizer);
+
+  /* get the 1st and 3rd movies from the sorted list */
+  /* 1st and 2nd may have been together in their last match */
+  /* (same matchCount or lastPlayedAt) */
+  let [movie1, , movie2] = movies.sort(sortFunctions[0]);
 
   return (
     <>
