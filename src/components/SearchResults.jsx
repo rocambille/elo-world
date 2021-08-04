@@ -2,29 +2,32 @@ import React from 'react';
 
 import Movie from './Movie';
 import { useMovieList, useSearch } from '../contexts';
+import MovieGrid from './MovieGrid';
 
 function SearchResult({ data }) {
   const { id } = data;
 
   const { movies, addMovie, removeMovie } = useMovieList();
 
-  const hasSeen = movies.find((movie) => movie.id === id);
+  const when = {
+    [true]: {
+      onClick: () => removeMovie(data),
+      text: '-',
+    },
+    [false]: {
+      onClick: () => addMovie(data),
+      text: '+',
+    },
+  };
 
-  const buttonData = { onClick: () => addMovie(data), text: '+' };
-
-  if (hasSeen) {
-    buttonData.onClick = () => removeMovie(data);
-    buttonData.text = '-';
-  }
+  const hasSeen = movies.find((movie) => movie.id === id) != null;
 
   return (
-    <li>
-      <Movie data={data}>
-        <button type="button" onClick={buttonData.onClick}>
-          {buttonData.text}
-        </button>
-      </Movie>
-    </li>
+    <Movie data={data}>
+      <button type="button" onClick={when[hasSeen].onClick}>
+        {when[hasSeen].text}
+      </button>
+    </Movie>
   );
 }
 
@@ -35,13 +38,7 @@ SearchResult.propTypes = {
 function SearchResults() {
   const { results } = useSearch();
 
-  return (
-    <ol className="grid grid-cols-1 sm:grid-cols-auto-fit gap-y-4 justify-items-center">
-      {results.map((result) => (
-        <SearchResult key={result.id} data={result} />
-      ))}
-    </ol>
-  );
+  return <MovieGrid movies={results} movieComponentType={SearchResult} />;
 }
 
 export default SearchResults;

@@ -42,18 +42,20 @@ function Movie({ children, data }) {
       )}
       <figcaption className="flex flex-col sm:w-96 p-4 sm:p-8 text-center sm:text-left space-y-2">
         <p className="font-semibold">{title}</p>
-        <time className="mb-2 text-gray-500">
-          {new Date(release_date).getFullYear()}
-        </time>
+        {release_date && (
+          <time className="mb-2 text-gray-500">
+            {new Date(release_date).getFullYear()}
+          </time>
+        )}
         {elo && lastDelta && (
           <p>
             {formatElo(elo)}
             {formatLastDelta(lastDelta)}
           </p>
         )}
-        <div className="hidden sm:block">
-          <p className="line-clamp-6 overflow-ellipsis">{overview}</p>
-        </div>
+        <p className="hidden sm:line-clamp-6 sm:overflow-ellipsis">
+          {overview}
+        </p>
         {children}
       </figcaption>
     </figure>
