@@ -25,7 +25,7 @@ function MovieListProvider({ children }) {
   const hasSomethingToSave = !git.isUpToDate;
 
   const addMovie = (data) => {
-    setMovies([...movies, { ...data, elo: 1500, matchCount: 0 }]);
+    setMovies([...movies, data]);
   };
 
   const removeMovie = ({ id }) => {
